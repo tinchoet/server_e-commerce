@@ -164,18 +164,22 @@ app.get('/cats_products/:nombreArchivo', (req, res) => {
   });
 });
 
-if (!token) {
-  return res.status(401).json({ msj: 'No tenés permiso!!!' });
-}
+app.get('/ruta-protegida', (req, res) => {
+  const token = req.header('Authorization'); // Suponiendo que el token se envía en el encabezado Authorization
 
-// Si hay token, verifico si no está vencido.
-jwt.verify(token, key, (err, decoded) => {
-  if (err) {
-    return res.status(401).json({ msj: 'Token vencido, anda a comprar otro.' });
+  if (!token) {
+    return res.status(401).json({ msj: 'No tenés permiso!!!' });
   }
-  // Si llego acá es porque está todo bien.
-  res.json({ msj: 'Acceso permitido', usuario: decoded });
+
+  jwt.verify(token, key, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ msj: 'Token vencido, anda a comprar otro.' });
+    }
+    // Si llego acá es porque está todo bien.
+    res.json({ msj: 'Acceso permitido', usuario: decoded });
+  });
 });
+
 
 
 
