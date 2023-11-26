@@ -260,137 +260,137 @@ app.post("/usercart", (req, res) => {
 
 
 // Middleware para cargar datos desde archivos JSON
-function cargarJSON(jsonDirectory) {
-  const jsonData = [];
-  try {
-    const files = fs.readdirSync(jsonDirectory);
-    files.forEach((file) => {
-      if (file.endsWith(".json")) {
-        const filePath = path.join(jsonDirectory, file);
-        const data = fs.readFileSync(filePath, "utf8");
-        jsonData.push(JSON.parse(data));
-      }
-    });
-  } catch (error) {
-    console.error("Error al leer el directorio:", error.message);
-  }
-  return jsonData;
-}
+// function cargarJSON(jsonDirectory) {
+//   const jsonData = [];
+//   try {
+//     const files = fs.readdirSync(jsonDirectory);
+//     files.forEach((file) => {
+//       if (file.endsWith(".json")) {
+//         const filePath = path.join(jsonDirectory, file);
+//         const data = fs.readFileSync(filePath, "utf8");
+//         jsonData.push(JSON.parse(data));
+//       }
+//     });
+//   } catch (error) {
+//     console.error("Error al leer el directorio:", error.message);
+//   }
+//   return jsonData;
+// }
 
-// Middleware para validar token
-function validarToken(req, res, next) {
-  const token = req.headers["authorization"];
+// // Middleware para validar token
+// function validarToken(req, res, next) {
+//   const token = req.headers["authorization"];
 
-  // Si no hay token
-  if (!token) {
-    return res.status(401).json({ msj: "No tenés permiso!!!" });
-  }
+//   // Si no hay token
+//   if (!token) {
+//     return res.status(401).json({ msj: "No tenés permiso!!!" });
+//   }
 
-  // Si hay token, verifico si no está vencido.
-  jwt.verify(token, key, (err, decoded) => {
-    if (err) {
-      return res
-        .status(401)
-        .json({ msj: "Token vencido" });
-    }
+//   // Si hay token, verifico si no está vencido.
+//   jwt.verify(token, key, (err, decoded) => {
+//     if (err) {
+//       return res
+//         .status(401)
+//         .json({ msj: "Token vencido" });
+//     }
 
-    // Si llego acá es porque está todo bien.
-    req.usuario = decoded; // Agregar la información del usuario al objeto de solicitud
-    next();
-  });
-}
+//     // Si llego acá es porque está todo bien.
+//     req.usuario = decoded; // Agregar la información del usuario al objeto de solicitud
+//     next();
+//   });
+// }
 
-// Middleware de autorización para la ruta /cart
-function validarTokenCart(req, res, next) {
-  const token = req.headers["authorization"];
+ // Middleware de autorización para la ruta /cart
+ function validarTokenCart(req, res, next) {
+   const token = req.headers["authorization"];
 
-  // Si no hay token
-  if (!token) {
+   // Si no hay token
+   if (!token) {
     return res.status(401).json({ msj: "No tenés permiso para acceder a /cart!!!" });
-  }
+   }
 
-  // Si hay token, verifico si no está vencido.
-  jwt.verify(token, key, (err, decoded) => {
+   // Si hay token, verifico si no está vencido.
+   jwt.verify(token, key, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ msj: "Token vencido para acceder a /cart." });
+       return res.status(401).json({ msj: "Token vencido para acceder a /cart." });
     }
 
-    // Si llego acá es porque está todo bien.
-    req.usuario = decoded; // Agregar la información del usuario al objeto de solicitud
+     // Si llego acá es porque está todo bien.
+     req.usuario = decoded; // Agregar la información del usuario al objeto de solicitud
     next();
   });
-}
+ }
 
-// Endpoint para obtener datos de categoria desde archivos JSON (ruta protegida con token)
-app.get("/json/cats", validarToken, (req, res) => {
-  const jsonDirectorycats = path.join(__dirname, "jsons", "cats");
-  const jsonDatacats = cargarJSON(jsonDirectorycats);
-  res.json({ usuario: req.usuario, data: jsonDatacats });
-});
+ // Endpoint para obtener datos de categoria desde archivos JSON (ruta protegida con token)
+ app.get("/json/cats", validarToken, (req, res) => {
+   const jsonDirectorycats = path.join(__dirname, "jsons", "cats");
+   const jsonDatacats = cargarJSON(jsonDirectorycats);
+   res.json({ usuario: req.usuario, data: jsonDatacats });
+ });
 
-// Endpoint para la ruta /cart protegida con token
-app.get("/cart", validarTokenCart, (req, res) => {
+ // Endpoint para la ruta /cart protegida con token
+ app.get("/cart", validarTokenCart, (req, res) => {
   res.json({ msj: "Acceso permitido a la ruta /cart", usuario: req.usuario });
 });
 
-// Configuración de CORS
-const corsOptions = {
-  origin: "http://localhost:5500", // Cambiar al dominio de tu frontend
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true,
-  optionsSuccessStatus: 204,
-};
+ // Configuración de CORS
+ const corsOptions = {
+   origin: "http://localhost:5500", // Cambiar al dominio de tu frontend
+   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+   credentials: true,
+   optionsSuccessStatus: 204,
+ };
 
-app.use(cors(corsOptions));
+ app.use(cors(corsOptions));
 app.use(bodyParser.json()); // Middleware para parsear el cuerpo de las solicitudes en formato JSON.
 
 // Nos inventamos datos de usuarios
-let usuarios = [
+ let usuarios = [
   { id: 1, usuario: "juan", clave: "clavejuan" },
-  { id: 2, usuario: "maria", clave: "clavemaria" },
-  { id: 3, usuario: "bruno", clave: "clavebruno" },
-];
+   { id: 2, usuario: "maria", clave: "clavemaria" },
+   { id: 3, usuario: "bruno", clave: "clavebruno" },
+ ];
 
-// Middleware que chequea el login
-function mwLogin(req, res, next) {
-  const { usuario, clave } = req.body;
+ // Middleware que chequea el login
+ function mwLogin(req, res, next) {
+   const { usuario, clave } = req.body;
 
-  // ¿Hay usuario y clave?
-  if (!usuario || !clave) {
-    return res.status(401).json({ msj: "Falta usuario o clave" });
+   // ¿Hay usuario y clave?
+   if (!usuario || !clave) {
+     return res.status(401).json({ msj: "Falta usuario o clave" });
+   }
+
+   // ¿Existe el usuario y la clave en mi lista?
+   const usuarioExiste = usuarios.find(
+     (user) => user.usuario === usuario && user.clave === clave
+   );
+   if (!usuarioExiste) {
+     return res.status(401).json({ msj: "Usuario o clave no válidos" });
   }
 
-  // ¿Existe el usuario y la clave en mi lista?
-  const usuarioExiste = usuarios.find(
-    (user) => user.usuario === usuario && user.clave === clave
-  );
-  if (!usuarioExiste) {
-    return res.status(401).json({ msj: "Usuario o clave no válidos" });
-  }
+   // Genero el Token JWT
+   const token = jwt.sign(
+     { userId: usuario.id, username: usuarioExiste.usuario },
+     key,
+     { expiresIn: Math.floor(Date.now() / 1000) + 10 }
+   );
+   console.log(token);
+   res.token = token;
+   next();
+ }
 
-  // Genero el Token JWT
-  const token = jwt.sign(
-    { userId: usuario.id, username: usuarioExiste.usuario },
-    key,
-    { expiresIn: Math.floor(Date.now() / 1000) + 10 }
-  );
-  console.log(token);
-  res.token = token;
-  next();
-}
+ // Protejo la ruta '/login' con el middleware mwLogin y luego devuelve un mensaje y el token.
+ app.post("/login", mwLogin, (req, res) => {
+   res.json({ msj: "Te dejo ingresar y te di un token.", token: res.token });
+ });
 
-// Protejo la ruta '/login' con el middleware mwLogin y luego devuelve un mensaje y el token.
-app.post("/login", mwLogin, (req, res) => {
-  res.json({ msj: "Te dejo ingresar y te di un token.", token: res.token });
-});
-
-// Ruta protegida con token
-app.get("/lista-protegida", validarToken, (req, res) => {
-  res.json({ msj: "Acceso permitido", usuario: req.usuario });
-});
+ // Ruta protegida con token
+ app.get("/lista-protegida", validarToken, (req, res) => {
+   res.json({ msj: "Acceso permitido", usuario: req.usuario });
+ });
 
 
 app.listen(port, () => {
-  console.log(`Servidor escuchando en http://localhost:${port}/usercart`);
+   console.log(`Servidor escuchando en http://localhost:${port}/usercart`);
 });
 
