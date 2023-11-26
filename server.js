@@ -178,6 +178,36 @@ jwt.verify(token, key, (err, decoded) => {
 });
 
 
+app.post('/usercart', (req, res) => {
+  // Cargar el contenido del archivo JSON
+  const filePath = './user_cart/';
+  const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+
+  // Aquí puedes realizar modificaciones en el JSON según los datos de la solicitud POST
+  const requestData = req.body;
+  console.log('Datos recibidos:', requestData);
+
+  // Ejemplo: Agregar un nuevo producto al arreglo de productos
+
+  console.log(requestData.id)
+  const nuevoProducto = {
+            "id": requestData.id,
+            "name": requestData.name,
+            "count": requestData.count,
+            "unitCost": requestData.unitCost,
+            "currency": requestData.currency,
+            "image": requestData.image
+  };
+  jsonData.articles.push(nuevoProducto);
+
+  // Guardar el JSON modificado de nuevo en el archivo
+  fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf8');
+
+
+  // Puedes enviar una respuesta al cliente
+  res.status(200).json({ message: 'Solicitud POST recibida con éxito' });
+});
 
 
 app.listen(port, () => {
