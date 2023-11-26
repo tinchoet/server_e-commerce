@@ -239,15 +239,15 @@ app.post("/usercart", (req, res) => {
       const postData = req.body;
   
       // Lee el contenido actual del archivo JSON
-      // const fileContent = fs.readFileSync('./jsons/user_cart/25801.json', 'utf8');
-      // let posts = JSON.parse(fileContent);
-  
-      // // Agrega el nuevo post al array de posts
-      // let Array = [...posts, postData];
+      const fileContent = fs.readFileSync('./jsons/user_cart/25801.json', 'utf8');
+      let posts = JSON.parse(fileContent);
+      
+      // Agrega el nuevo post al array de posts
+      posts.articles.push(postData)
       
       
       // Guarda el JSON modificado en el mismo archivo
-      fs.writeFileSync('./jsons/user_cart/25801.json')
+      fs.writeFileSync('./jsons/user_cart/25801.json', JSON.stringify(posts));
   
       // Envía una respuesta al cliente
       res.status(201).json({ message: 'Solicitud POST recibida con éxito', data: postData });
