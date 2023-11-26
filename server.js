@@ -1,4 +1,6 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
 const fs = require('fs');
 const { join } = require('path');
 const path = require('path');
@@ -23,7 +25,7 @@ function cargarJSON(jsonDirectory) {
     // Lee y parsea cada archivo JSON
     const jsonData = jsonFiles.map(file => {
       const filePath = join(jsonDirectory, file);
-      const data = JSON.parse(fs.readFileSync(filePath, 'utf8')) ;
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
       return data
     });
 
@@ -161,6 +163,21 @@ app.get('/cats_products/:nombreArchivo', (req, res) => {
     res.send(data);
   });
 });
+
+if (!token) {
+  return res.status(401).json({ msj: 'No tenés permiso!!!' });
+}
+
+// Si hay token, verifico si no está vencido.
+jwt.verify(token, key, (err, decoded) => {
+  if (err) {
+    return res.status(401).json({ msj: 'Token vencido, anda a comprar otro.' });
+  }
+  // Si llego acá es porque está todo bien.
+  res.json({ msj: 'Acceso permitido', usuario: decoded });
+});
+
+
 
 
 app.listen(port, () => {
