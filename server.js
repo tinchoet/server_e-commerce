@@ -322,7 +322,7 @@ app.post("/usercart", (req, res) => {
  }
 
  // Endpoint para obtener datos de categoria desde archivos JSON (ruta protegida con token)
- app.get("/json/cats", validarToken, (req, res) => {
+ app.get("/json/cats", validarTokenCart, (req, res) => {
    const jsonDirectorycats = path.join(__dirname, "jsons", "cats");
    const jsonDatacats = cargarJSON(jsonDirectorycats);
    res.json({ usuario: req.usuario, data: jsonDatacats });
@@ -385,7 +385,7 @@ app.use(bodyParser.json()); // Middleware para parsear el cuerpo de las solicitu
  });
 
  // Ruta protegida con token
- app.get("/lista-protegida", validarToken, (req, res) => {
+ app.get("/lista-protegida", validarTokenCart, (req, res) => {
    res.json({ msj: "Acceso permitido", usuario: req.usuario });
  });
 
