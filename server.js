@@ -98,7 +98,17 @@ app.get('/user_cart', (req, res) => {
 
 ////////////////////////
 
+app.use(express.json());
 
+// Ruta para manejar solicitudes POST en "/usercart"
+app.post('/usercart', (req, res) => {
+  // Aquí puedes manejar los datos de la solicitud POST
+  const requestData = req.body;
+  console.log('Datos recibidos:', requestData);
+
+  // Puedes enviar una respuesta al cliente
+  res.status(200).json({ message: 'Solicitud POST recibida con éxito' });
+});
 
 const directorio = './jsons/products_comments';
 
@@ -179,6 +189,9 @@ app.get('/ruta-protegida', (req, res) => {
     res.json({ msj: 'Acceso permitido', usuario: decoded });
   });
 });
+
+app.use(express.json());
+
 
 
 app.post('/usercart', (req, res) => {
